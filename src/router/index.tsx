@@ -1,14 +1,22 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Clients from '../pages/Clients';
 import ErrorPage from '../pages/Error';
-import ClientsLayout from '../layouts/ClientsLayout';
+import ClientsLayout from '../layouts/MainLayout';
+import TimeEntries from '../pages/TimeEntries';
 
 const router = createBrowserRouter([
   {
-    path: '/clients',
+    path: '/',
     element: <ClientsLayout />,
     errorElement: <ErrorPage />,
-    children: [{ index: true, element: <Clients /> }],
+    children: [
+      { path: '/', element: <Navigate to="/clients" replace /> },
+      { path: 'clients', element: <Clients /> },
+      {
+        path: 'time-entries',
+        element: <TimeEntries />,
+      },
+    ],
   },
 ]);
 

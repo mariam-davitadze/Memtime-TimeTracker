@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Client } from '../../types/Client';
-import { Layout, Typography, Segmented, Collapse } from 'antd';
+import { Layout, Typography, Segmented, Collapse, Spin, Empty } from 'antd';
 import { getClients } from '../../api/clients';
 import { ClientContent, ClientHeader } from './Item';
 
 const { Title } = Typography;
+
 const Clients = () => {
   const [clients, setClients] = useState<Client[] | null>(null);
   const [filter, setFilter] = useState<string | null>('all');
@@ -18,19 +19,22 @@ const Clients = () => {
   const items = useMemo(() => {
     if (!clients || !clients.length) return [];
     return (
-      clients?.filter((c) => filter === 'all' || c.status === filter) || []
-    ).map((client) => ({
-      key: client.id,
-      label: (
-        <ClientHeader
-          name={client.name}
-          description={client.description}
-          createdAt={client.createdAt}
-          updatedAt={client.updatedAt}
-        />
-      ),
-      children: <ClientContent clientId={client.id} />,
-    }));
+      clients
+        .filter((c) => filter === 'all' || c.status === filter)
+        .map((client) => ({
+          key: client.id,
+          label: (
+            <ClientHeader
+              name={client.name}
+              description={client.description}
+              createdAt={client.createdAt}
+              updatedAt={client.updatedAt}
+              status={client.status}
+            />
+          ),
+          children: <ClientContent clientId={client.id} />,
+        })) || []
+    );
   }, [clients, filter]);
 
   return (
@@ -54,24 +58,25 @@ const Clients = () => {
         />
       </div>
 
-      <Collapse
-        items={items}
-        bordered={false}
-        expandIconPlacement='end'
-        styles={{
-          root: {
+      {clients === null ? (
+        <Spin size='large' />
+      ) : !clients.length ? (
+        <Empty description='No clients found' />
+      ) : (
+        <Collapse
+          items={items}
+          bordered={false}
+          expandIconPlacement='end'
+          style={{
             backgroundColor: '#fff',
             borderRadius: 12,
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
-          },
-          header: {
-            padding: '16px',
-          },
-        }}
-        onChange={(activeKeys) => {
-          console.log('Collapse changed', activeKeys);
-        }}
-      />
+          }}
+          onChange={(activeKeys) => {
+            console.log('Collapse changed', activeKeys);
+          }}
+        />
+      )}
     </Layout>
   );
 };

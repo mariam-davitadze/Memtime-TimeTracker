@@ -1,3 +1,4 @@
+import { Task } from "./Task";
 export interface Project {
   id: string;
   name: string;
@@ -5,4 +6,8 @@ export interface Project {
   status: "completed" | "in-progress" | "pending";
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProjectWithTasks extends Project {
+  tasks?: Task[];
 }
